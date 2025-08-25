@@ -5,6 +5,8 @@ import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.r2dbc.entity.UserEntity;
 import co.com.pragma.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +16,11 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         UserEntity/* change for adapter model */,
         Long,
         MyReactiveRepository
-> implements UserRepository {
+        > implements UserRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(MyReactiveRepositoryAdapter.class);
+
+
     public MyReactiveRepositoryAdapter(MyReactiveRepository repository, ObjectMapper mapper) {
         /**
          *  Could be use mapper.mapBuilder if your domain model implement builder pattern
@@ -26,6 +32,18 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
 
     @Override
     public Mono<User> save(User user) {
-        return super.save(user);
+        log.trace("MyReactiveRepositoryAdapter, create user with email: {}", user.getEmail());
+        return super.save(user)
+                .doOnNext(savedUser -> log.trace("User created with id: {}", savedUser.getIdUser()))
+                .doOnError(error -> log.error("Error in MyReactiveRepositoryAdapter: {}", error));
+    }
+
+    @Override
+    public Mono<User> findByEmail(String email) {
+        log.trace("MyReactiveRepositoryAdapter, validate if email is already registered");
+        return repository.findByEmail(email)
+                .map(entity -> mapper.map(entity, User.class))
+                .doOnNext(user -> log.trace("User found: {}", user.getEmail()))
+                .doOnError(error -> log.error("Error finding user by email: {}", error));
     }
 }

@@ -29,3 +29,8 @@ management:
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
 
+logging:
+  level:
+    root: INFO
+    co.com.pragma: TRACE
+

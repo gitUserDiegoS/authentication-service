@@ -2,6 +2,7 @@ package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.UserRepository;
+import co.com.pragma.usecase.exception.EmailAlreadyRegisteredException;
 import lombok.RequiredArgsConstructor;
 
 
@@ -14,11 +15,19 @@ public class UserUseCase {
 
 
     public Mono<User> saveUser(User user) {
-        return userRepository.save(user)
-                .flatMap(savedUser -> {
-                    // otras operaciones relacionadas, p.ej asignar roles
-                    return Mono.just(savedUser);
-                });
+
+        return getUserByEmail(user.getEmail())
+                .flatMap(userIncoming -> Mono.<User>error(new EmailAlreadyRegisteredException(
+                        "Email " + userIncoming.getEmail() + " is already registered"
+
+                )))
+                .switchIfEmpty(userRepository.save(user));
+
+
+    }
+
+    public Mono<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

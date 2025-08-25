@@ -7,4 +7,6 @@ public interface UserRepository {
 
     Mono<User> save(User task);
 
+    Mono<User> findByEmail(String email);
+
 }
