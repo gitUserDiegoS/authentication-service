@@ -1,5 +1,11 @@
 package co.com.pragma.r2dbc;
 
+import co.com.pragma.model.user.User;
+import co.com.pragma.model.user.valueObjects.Email;
+import co.com.pragma.model.user.valueObjects.LastName;
+import co.com.pragma.model.user.valueObjects.Name;
+import co.com.pragma.model.user.valueObjects.SalaryBase;
+import co.com.pragma.r2dbc.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,9 +13,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -27,52 +39,67 @@ class MyReactiveRepositoryAdapterTest {
     @Mock
     ObjectMapper mapper;
 
+    @Mock
+    TransactionalOperator operator;
+
+    private final Clock fixedClock = Clock.fixed(
+            LocalDate.of(2025, 8, 27).atStartOfDay(ZoneId.systemDefault()).toInstant(),
+            ZoneId.systemDefault()
+    );
+
+
+    private final UserEntity userEntity = UserEntity.builder()
+            .idUser(1L)
+            .idDocument("1234567")
+            .name("Name")
+            .lastname("lastName")
+            .birthdate(LocalDate.now(fixedClock))
+            .address("address")
+            .mobile("3199689469")
+            .email("email@email.com")
+            .salaryBase(BigDecimal.valueOf(1))
+            .idRole(1L)
+            .build();
+
+
+    private final User user = User.builder()
+            .idUser(1L)
+            .idDocument("1234567")
+            .name(new Name("name"))
+            .lastname(new LastName("lastName"))
+            .birthdate(LocalDate.now(fixedClock))
+            .address("address")
+            .mobile("3199689469")
+            .email(new Email("email@email.com"))
+            .salaryBase(new SalaryBase(BigDecimal.valueOf(1)))
+            .idRole(1L)
+            .build();
+
     @Test
-    void mustFindValueById() {
+    void mustFindByEmail() {
+        when(mapper.map(userEntity, User.class)).thenReturn(user);
+        when(repository.findByEmail(any(String.class))).thenReturn(Mono.just(userEntity));
 
-        when(repository.findById("1")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Mono<Object> result = repositoryAdapter.findById("1");
+        Mono<User> result = repositoryAdapter.findByEmail("email@email.com");
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNextMatches(value -> value.getIdUser().equals(1L))
                 .verifyComplete();
     }
 
-    @Test
-    void mustFindAllValues() {
-        when(repository.findAll()).thenReturn(Flux.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Flux<Object> result = repositoryAdapter.findAll();
-
-        StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
-                .verifyComplete();
-    }
-
-    @Test
-    void mustFindByExample() {
-        when(repository.findAll(any(Example.class))).thenReturn(Flux.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
-
-        Flux<Object> result = repositoryAdapter.findByExample("test");
-
-        StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
-                .verifyComplete();
-    }
 
     @Test
     void mustSaveValue() {
-        when(repository.save("test")).thenReturn(Mono.just("test"));
-        when(mapper.map("test", Object.class)).thenReturn("test");
 
-        Mono<Object> result = repositoryAdapter.save("test");
+        when(mapper.map(userEntity, User.class)).thenReturn(user);
+        when(mapper.map(user, UserEntity.class)).thenReturn(userEntity);
+        when(operator.transactional(any(Mono.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(repository.save(any(UserEntity.class))).thenReturn(Mono.just(userEntity));
+
+        Mono<User> result = repositoryAdapter.save(user);
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.equals("test"))
+                .expectNext(user)
                 .verifyComplete();
     }
 }
