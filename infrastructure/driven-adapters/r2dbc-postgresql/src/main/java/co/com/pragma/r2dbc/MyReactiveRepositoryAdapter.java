@@ -42,7 +42,7 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         return super.save(user)
                 .as(operator::transactional)
                 .doOnNext(savedUser -> log.trace("User created successfully with id: {}", savedUser.getIdUser()))
-                .doOnError(error -> log.error("Error in user Creation, failed with message: {}", error));
+                .doOnError(error -> log.error("Error in user Creation, failed with message: {}", error.getMessage()));
     }
 
     @Override
@@ -51,6 +51,6 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         return repository.findByEmail(email)
                 .map(entity -> mapper.map(entity, User.class))
                 .doOnNext(user -> log.trace("User found with email: {}", user.getEmail()))
-                .doOnError(error -> log.error("Error searching user by email, failed with message: {}", error));
+                .doOnError(error -> log.error("Error searching user by email, failed with message: {}", error.getMessage()));
     }
 }

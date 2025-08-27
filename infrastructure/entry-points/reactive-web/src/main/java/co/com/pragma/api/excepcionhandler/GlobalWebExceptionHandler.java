@@ -23,8 +23,6 @@ import reactor.core.publisher.Mono;
 @RestControllerAdvice
 public class GlobalWebExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalWebExceptionHandler.class);
-
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
     public Mono<ResponseEntity<ErrorResponseDto>> handleEmailRegistered(
             EmailAlreadyRegisteredException ex, ServerWebExchange exchange) {

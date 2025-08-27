@@ -6,7 +6,6 @@ import co.com.pragma.model.user.valueObjects.Name;
 import co.com.pragma.model.user.valueObjects.SalaryBase;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
