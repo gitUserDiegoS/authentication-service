@@ -1,5 +1,9 @@
 package co.com.pragma.model.user;
 
+import co.com.pragma.model.user.valueObjects.Email;
+import co.com.pragma.model.user.valueObjects.LastName;
+import co.com.pragma.model.user.valueObjects.Name;
+import co.com.pragma.model.user.valueObjects.SalaryBase;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,12 +19,13 @@ public class User {
 
     private Long idUser;
     private String idDocument;
-    private String name;
-    private String lastname;
+    private Name name;
+    private LastName lastname;
     private LocalDate birthdate;
     private String address;
     private String mobile;
-    private String email;
-    private BigDecimal salaryBase;
+    private Email email;
+    private SalaryBase salaryBase;
     private Long idRole;
+
 }

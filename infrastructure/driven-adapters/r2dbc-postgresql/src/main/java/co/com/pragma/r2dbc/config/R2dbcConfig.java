@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import co.com.pragma.r2dbc.config.MySQLConnectionProperties;
 import org.springframework.r2dbc.connection.R2dbcTransactionManager;
 import org.springframework.transaction.ReactiveTransactionManager;
+import org.springframework.transaction.reactive.TransactionalOperator;
 
 
 import java.time.Duration;
@@ -38,6 +39,16 @@ public class R2dbcConfig {
                 .build();
 
         return new ConnectionPool(poolConfig);
+    }
+
+    @Bean
+    public R2dbcTransactionManager transactionManager(ConnectionFactory connectionFactory) {
+        return new R2dbcTransactionManager(connectionFactory);
+    }
+
+    @Bean
+    public TransactionalOperator transactionalOperator(ReactiveTransactionManager txManager) {
+        return TransactionalOperator.create(txManager);
     }
 
 }

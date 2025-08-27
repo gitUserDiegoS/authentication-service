@@ -1,8 +1,8 @@
 package co.com.pragma.api;
 
-import co.com.pragma.model.user.User;
+import co.com.pragma.api.dto.CreateUserDto;
+import co.com.pragma.api.mapper.UserMapperDto;
 import co.com.pragma.usecase.user.UserUseCase;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +22,21 @@ public class Handler {
 
     private final UserUseCase userUseCase;
 
+    private final UserMapperDto userMapperDto;
 
     public Mono<ServerResponse> listenCreateUserUseCase(ServerRequest serverRequest) {
 
-        return serverRequest.bodyToMono(User.class)
-                .doOnNext(user -> log.trace("Begin request to create user"))
+        return serverRequest.bodyToMono(CreateUserDto.class)
+                .doOnNext(user -> log.trace("Begin request to create user with email: {}", user.getEmail()))
+                .map(userMapperDto::toModel)
                 .flatMap(userUseCase::saveUser)
-                .doOnNext(savedUser -> log.trace("User created successfully"))
-                .flatMap(savedUser -> ServerResponse.ok()
+                .map(userMapperDto::toResponse)
+                .flatMap(saved -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(savedUser))
-                .doOnError(err -> log.error("Error in handler: {}", err.getMessage(), err));
+                        .bodyValue(saved))
+                .doOnError(err -> log.error("Error in handler{}", err.getMessage(), err));
+
     }
+
+
 }

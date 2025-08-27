@@ -1,6 +1,11 @@
 package co.com.pragma.api.excepcionhandler;
 
 import co.com.pragma.api.dto.ErrorResponseDto;
+
+import co.com.pragma.model.user.excepcion.EmailInvalidException;
+import co.com.pragma.model.user.excepcion.LastNameInvalidException;
+import co.com.pragma.model.user.excepcion.NameInvalidException;
+import co.com.pragma.model.user.excepcion.SalaryBaseInvalidException;
 import co.com.pragma.usecase.exception.EmailAlreadyRegisteredException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +58,6 @@ public class GlobalWebExceptionHandler {
     }
 
 
-
     @ExceptionHandler(DuplicateKeyException.class)
     public Mono<ResponseEntity<ErrorResponseDto>> handleDuplicateKey(
             DuplicateKeyException ex, ServerWebExchange exchange) {
@@ -70,7 +74,69 @@ public class GlobalWebExceptionHandler {
                 .body(errorResponse));
     }
 
+    @ExceptionHandler(NameInvalidException.class)
+    public Mono<ResponseEntity<ErrorResponseDto>> handleNameInvalidException(
+            NameInvalidException ex, ServerWebExchange exchange) {
 
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                "INVALID_NAME",
+                ex.getMessage(),
+                exchange.getRequest().getPath().value()
+        );
+
+        return Mono.just(org.springframework.http.ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse));
+    }
+
+    @ExceptionHandler(EmailInvalidException.class)
+    public Mono<ResponseEntity<ErrorResponseDto>> handleEmailInvalidException(
+            EmailInvalidException ex, ServerWebExchange exchange) {
+
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                "INVALID_EMAIL",
+                ex.getMessage(),
+                exchange.getRequest().getPath().value()
+        );
+
+        return Mono.just(org.springframework.http.ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse));
+    }
+
+    @ExceptionHandler(LastNameInvalidException.class)
+    public Mono<ResponseEntity<ErrorResponseDto>> handleLastNameInvalidException(
+            LastNameInvalidException ex, ServerWebExchange exchange) {
+
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                "INVALID_LAST_NAME",
+                ex.getMessage(),
+                exchange.getRequest().getPath().value()
+        );
+
+        return Mono.just(org.springframework.http.ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse));
+    }
+
+    @ExceptionHandler(SalaryBaseInvalidException.class)
+    public Mono<ResponseEntity<ErrorResponseDto>> handleSalaryBaseInvalidException(
+            SalaryBaseInvalidException ex, ServerWebExchange exchange) {
+
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                "INVALID_SALARY_BASE",
+                ex.getMessage(),
+                exchange.getRequest().getPath().value()
+        );
+
+        return Mono.just(org.springframework.http.ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse));
+    }
 
 }
 
