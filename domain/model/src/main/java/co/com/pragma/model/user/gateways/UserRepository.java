@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface UserRepository {
 
-    Mono<User> save(User task);
+    Mono<User> save(User user);
 
     Mono<User> findByEmail(String email);
 

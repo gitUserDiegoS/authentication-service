@@ -1,5 +1,6 @@
 package co.com.pragma.model.user.valueObjects;
 
+import co.com.pragma.model.user.excepcion.LastNameInvalidException;
 import co.com.pragma.model.user.excepcion.NameInvalidException;
 
 public class LastName {
@@ -9,7 +10,7 @@ public class LastName {
     public LastName(String value) {
 
         if (value == null || value.isBlank()) {
-            throw new NameInvalidException("LastName must not be null or blank");
+            throw new LastNameInvalidException("LastName must not be null or blank");
         }
         this.value = value.trim();
     }

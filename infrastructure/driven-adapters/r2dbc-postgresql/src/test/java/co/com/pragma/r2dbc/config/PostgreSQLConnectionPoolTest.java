@@ -10,12 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 class PostgreSQLConnectionPoolTest {
-/*
+
     @InjectMocks
-    private PostgreSQLConnectionPool connectionPool;
+    private R2dbcConfig connectionPool;
 
     @Mock
-    private PostgresqlConnectionProperties properties;
+    private MySQLConnectionProperties properties;
 
 
     @BeforeEach
@@ -25,13 +25,13 @@ class PostgreSQLConnectionPoolTest {
         when(properties.host()).thenReturn("localhost");
         when(properties.port()).thenReturn(5432);
         when(properties.database()).thenReturn("dbName");
-        when(properties.schema()).thenReturn("schema");
-        when(properties.username()).thenReturn("username");
         when(properties.password()).thenReturn("password");
+        when(properties.username()).thenReturn("username");
     }
 
     @Test
     void getConnectionConfigSuccess() {
-        assertNotNull(connectionPool.getConnectionConfig(properties));
-    }*/
+        assertNotNull(connectionPool.connectionPool(properties));
+    }
 }
+

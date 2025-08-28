@@ -4,6 +4,7 @@ package co.com.pragma.model.user.valueObjects;
 import co.com.pragma.model.user.excepcion.EmailInvalidException;
 
 public class Email {
+
     private final String value;
 
     public Email(String value) {
