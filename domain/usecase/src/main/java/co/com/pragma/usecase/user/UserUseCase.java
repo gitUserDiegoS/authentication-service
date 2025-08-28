@@ -13,8 +13,6 @@ public class UserUseCase {
 
     public Mono<User> saveUser(User user) {
 
-        System.out.println("usuario rcibido"+user.getEmail().getValue());
-
         return getUserByEmail(user.getEmail().getValue())
                 .flatMap(userIncoming -> Mono.<User>error(new EmailAlreadyRegisteredException(
                         "Email"+ user.getEmail().getValue() +"is already registered"
