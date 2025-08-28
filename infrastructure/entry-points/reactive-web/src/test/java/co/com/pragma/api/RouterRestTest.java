@@ -8,6 +8,7 @@ import co.com.pragma.model.user.valueObjects.Email;
 import co.com.pragma.model.user.valueObjects.LastName;
 import co.com.pragma.model.user.valueObjects.Name;
 import co.com.pragma.model.user.valueObjects.SalaryBase;
+import co.com.pragma.usecase.user.IuserUseCase;
 import co.com.pragma.usecase.user.UserUseCase;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 
 import static org.mockito.ArgumentMatchers.any;
-import static reactor.core.publisher.Mono.when;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class})
 @WebFluxTest
@@ -37,9 +37,8 @@ class RouterRestTest {
     @Autowired
     private WebTestClient webTestClient;
 
-
     @MockitoBean
-    private UserUseCase userUseCase;
+    private IuserUseCase userUseCase;
 
     @MockitoBean
     private UserMapperDto userMapperDto;

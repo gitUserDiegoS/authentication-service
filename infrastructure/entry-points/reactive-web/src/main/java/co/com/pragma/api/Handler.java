@@ -2,6 +2,7 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.mapper.UserMapperDto;
+import co.com.pragma.usecase.user.IuserUseCase;
 import co.com.pragma.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class Handler {
 
     private static final Logger log = LoggerFactory.getLogger(Handler.class);
 
-    private final UserUseCase userUseCase;
+    private final IuserUseCase userUseCase;
 
     private final UserMapperDto userMapperDto;
 
