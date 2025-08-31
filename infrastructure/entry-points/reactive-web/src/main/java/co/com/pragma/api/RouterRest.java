@@ -1,5 +1,6 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.config.UserPath;
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
 import co.com.pragma.api.excepcionhandler.GlobalWebExceptionHandler;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +25,12 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
+@RequiredArgsConstructor
 @Tag(name = "Users", description = "User operations")
 public class RouterRest {
+
+    private final UserPath userPath;
+    private final Handler userHandler;
 
     @Bean
     @RouterOperations({
@@ -62,7 +68,7 @@ public class RouterRest {
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/v1/usuarios"), handler::listenCreateUserUseCase);
+        return route(POST(userPath.getUsers()), userHandler::listenCreateUserUseCase);
 
     }
 }

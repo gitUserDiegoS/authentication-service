@@ -34,3 +34,7 @@ logging:
     root: INFO
     co.com.pragma: TRACE
 
+routes:
+  paths:
+    users: "/api/v1/usuarios"
+

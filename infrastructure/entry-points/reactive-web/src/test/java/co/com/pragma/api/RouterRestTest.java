@@ -1,5 +1,6 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.config.UserPath;
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
 import co.com.pragma.api.mapper.UserMapperDto;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,9 +25,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class})
+@EnableConfigurationProperties(UserPath.class)
 @WebFluxTest
 class RouterRestTest {
 
@@ -37,6 +41,9 @@ class RouterRestTest {
 
     @MockitoBean
     private UserMapperDto userMapperDto;
+
+    @Autowired
+    private UserPath userPath;
 
     private final String users = "/api/v1/usuarios";
 
@@ -78,11 +85,16 @@ class RouterRestTest {
     }
 
     @Test
+    void shouldLoadUserPathProperties() {
+        assertEquals("/api/v1/usuarios", userPath.getUsers());
+    }
+
+    @Test
     void testListenPOSTUseCase() {
 
 
         webTestClient.post()
-                .uri(users)
+                .uri(userPath.getUsers())
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(createUserDto)
                 .exchange()
