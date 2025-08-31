@@ -3,7 +3,6 @@ package co.com.pragma.api;
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.mapper.UserMapperDto;
 import co.com.pragma.usecase.user.IuserUseCase;
-import co.com.pragma.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

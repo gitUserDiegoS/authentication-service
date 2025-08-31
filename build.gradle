@@ -36,4 +36,19 @@ sonar {
     }
 }
 
+subprojects {
+    apply plugin: 'jacoco'
+
+    jacocoTestReport {
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: [
+                        '**/constants/**',
+                        '**/constants/*'
+                ])
+            }))
+        }
+    }
+}
+
 apply from: './main.gradle'

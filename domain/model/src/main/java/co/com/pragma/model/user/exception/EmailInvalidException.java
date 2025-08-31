@@ -1,4 +1,4 @@
-package co.com.pragma.model.user.excepcion;
+package co.com.pragma.model.user.exception;
 
 public class EmailInvalidException extends RuntimeException {
     public EmailInvalidException(String message) {

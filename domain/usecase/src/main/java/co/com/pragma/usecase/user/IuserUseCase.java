@@ -6,4 +6,7 @@ import reactor.core.publisher.Mono;
 public interface IuserUseCase {
 
     Mono<User> saveUser(User user);
+
+    Mono<User> validateUser(User user);
+
 }

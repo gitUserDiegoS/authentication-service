@@ -1,10 +1,7 @@
 package co.com.pragma.r2dbc;
 
 import co.com.pragma.model.user.User;
-import co.com.pragma.model.user.valueObjects.Email;
-import co.com.pragma.model.user.valueObjects.LastName;
-import co.com.pragma.model.user.valueObjects.Name;
-import co.com.pragma.model.user.valueObjects.SalaryBase;
+
 import co.com.pragma.r2dbc.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.data.domain.Example;
 import org.springframework.transaction.reactive.TransactionalOperator;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -28,7 +23,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MyReactiveRepositoryAdapterTest {
-    // TODO: change four you own tests
 
     @InjectMocks
     MyReactiveRepositoryAdapter repositoryAdapter;
@@ -65,13 +59,13 @@ class MyReactiveRepositoryAdapterTest {
     private final User user = User.builder()
             .idUser(1L)
             .idDocument("1234567")
-            .name(new Name("name"))
-            .lastname(new LastName("lastName"))
+            .name("name")
+            .lastname("lastName")
             .birthdate(LocalDate.now(fixedClock))
             .address("address")
             .mobile("3199689469")
-            .email(new Email("email@email.com"))
-            .salaryBase(new SalaryBase(BigDecimal.valueOf(1)))
+            .email("email@email.com")
+            .salaryBase(BigDecimal.valueOf(1))
             .idRole(1L)
             .build();
 

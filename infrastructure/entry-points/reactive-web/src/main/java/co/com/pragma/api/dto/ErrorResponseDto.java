@@ -15,5 +15,5 @@ public class ErrorResponseDto {
     private String message;
 
     @Schema(description = "path Exception", example = "/api/v1/usuarios")
-    private String Path;
+    private String path;
 }

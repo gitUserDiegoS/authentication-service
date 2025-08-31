@@ -2,7 +2,7 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
-import co.com.pragma.model.user.User;
+import co.com.pragma.api.excepcionhandler.GlobalWebExceptionHandler;
 import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,8 +49,14 @@ public class RouterRest {
                                             content = @Content(
                                                     schema = @Schema(implementation =
                                                             UserResponseDto.class))),
-                                    @ApiResponse(responseCode = "400", description = "Bad request due to validation result"),
-                                    @ApiResponse(responseCode = "500", description = "Internal error")
+                                    @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            GlobalWebExceptionHandler.class))),
+                                    @ApiResponse(responseCode = "500", description = "Internal error",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            GlobalWebExceptionHandler.class)))
                             }
                     )
             )

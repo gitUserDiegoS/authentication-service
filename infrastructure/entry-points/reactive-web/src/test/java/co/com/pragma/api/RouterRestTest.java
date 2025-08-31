@@ -4,18 +4,13 @@ import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
 import co.com.pragma.api.mapper.UserMapperDto;
 import co.com.pragma.model.user.User;
-import co.com.pragma.model.user.valueObjects.Email;
-import co.com.pragma.model.user.valueObjects.LastName;
-import co.com.pragma.model.user.valueObjects.Name;
-import co.com.pragma.model.user.valueObjects.SalaryBase;
+
 import co.com.pragma.usecase.user.IuserUseCase;
-import co.com.pragma.usecase.user.UserUseCase;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -53,13 +48,13 @@ class RouterRestTest {
     private final User user = User.builder()
             .idUser(1L)
             .idDocument("1234567")
-            .name(new Name("name"))
-            .lastname(new LastName("lastName"))
+            .name("name")
+            .lastname("lastName")
             .birthdate(LocalDate.now(fixedClock))
             .address("address")
             .mobile("3199689469")
-            .email(new Email("email@email.com"))
-            .salaryBase(new SalaryBase(BigDecimal.valueOf(1)))
+            .email("email@email.com")
+            .salaryBase(BigDecimal.valueOf(1))
             .idRole(1L)
             .build();
 
