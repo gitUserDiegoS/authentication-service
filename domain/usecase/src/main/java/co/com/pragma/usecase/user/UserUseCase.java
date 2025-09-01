@@ -22,7 +22,9 @@ public class UserUseCase implements IuserUseCase {
     public Mono<User> saveUser(User user) {
 
 
-        return validateUser(user)
+        return validateUserByEmail(user)
+                .flatMap(this::validateUserByName)
+                .flatMap(this::validateUserBySalaryBase)
                 .flatMap(validUser -> getUserByEmail(validUser.getEmail())
                         .flatMap(userExists ->
                                 Mono.<User>error(new EmailAlreadyRegisteredException(String.format(UseCaseExceptionMessages.EMAIL_REGISTERED, userExists.getEmail())
@@ -36,8 +38,8 @@ public class UserUseCase implements IuserUseCase {
         return userRepository.findByEmail(email);
     }
 
-    @Override
-    public Mono<User> validateUser(User user) {
+
+    public Mono<User> validateUserByEmail(User user) {
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             return Mono.error(new EmailInvalidException(ModelExceptionMessages.INVALID_EMAIL));
@@ -47,6 +49,14 @@ public class UserUseCase implements IuserUseCase {
             return Mono.error(new EmailInvalidException(String.format(ModelExceptionMessages.INVALID_FORMAT_EMAIL, user.getEmail())));
         }
 
+
+        return Mono.just(user);
+    }
+
+
+    public Mono<User> validateUserByName(User user) {
+
+
         if (user.getName() == null || user.getName().isBlank()) {
             return Mono.error(new NameInvalidException(ModelExceptionMessages.INVALID_NAME));
         }
@@ -54,6 +64,11 @@ public class UserUseCase implements IuserUseCase {
         if (user.getLastname() == null || user.getLastname().isBlank()) {
             return Mono.error(new NameInvalidException(ModelExceptionMessages.INVALID_LAST_NAME));
         }
+
+        return Mono.just(user);
+    }
+
+    public Mono<User> validateUserBySalaryBase(User user) {
 
         if (user.getSalaryBase() == null) {
             return Mono.error(new SalaryBaseInvalidException(ModelExceptionMessages.INVALID_SALARY));
