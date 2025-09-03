@@ -11,4 +11,6 @@ public class UserPath {
 
     private String users;
 
+    private String usersByDocumentId;
+
 }

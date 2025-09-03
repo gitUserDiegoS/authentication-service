@@ -39,4 +39,19 @@ public class Handler {
     }
 
 
+    public Mono<ServerResponse> listenGetUserByDocumentId(ServerRequest serverRequest) {
+        String idDocument = serverRequest.pathVariable("idDocument");
+
+        return userUseCase.findByIdDocument(idDocument)
+                .doOnNext(user -> log.trace("Begin request to get user by email: {}", user.getEmail()))
+                .map(userMapperDto::toFoundResponse)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user))
+                .switchIfEmpty(ServerResponse.notFound().build())
+                .doOnError(err -> log.error("Error in handler-->listenGetUserByEmail{}", err.getMessage(), err));
+
+    }
+
+
 }

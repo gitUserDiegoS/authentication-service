@@ -3,12 +3,9 @@ package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.constants.ModelExceptionMessages;
-import co.com.pragma.model.user.exception.EmailInvalidException;
-import co.com.pragma.model.user.exception.NameInvalidException;
-import co.com.pragma.model.user.exception.SalaryBaseInvalidException;
+import co.com.pragma.model.user.exception.*;
 import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.usecase.constants.UseCaseExceptionMessages;
-import co.com.pragma.usecase.exception.EmailAlreadyRegisteredException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -211,5 +208,28 @@ class UserUseCaseTest {
                 })
                 .verify();
     }
+
+
+    @Test
+    void shouldGetUserByIdDocument() {
+        when(userRepository.findByIdDocument(anyString())).thenReturn(Mono.just(user));
+
+        StepVerifier.create(userUseCase.findByIdDocument(user.getIdDocument()))
+                .expectNext(user)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldFailWhenUserNotFoundByIdDocument() {
+        when(userRepository.findByIdDocument(anyString())).thenReturn(Mono.empty());
+
+        StepVerifier.create(userUseCase.findByIdDocument(user.getIdDocument()))
+                .expectErrorSatisfies(error -> {
+                    assertThat(error).isInstanceOf(UserNotFoundException.class);
+                    assertThat(error.getMessage()).isEqualTo(String.format(UseCaseExceptionMessages.USER_NOT_FOUND_EXCEPTION, user.getIdDocument()));
+                })
+                .verify();
+    }
+
 
 }

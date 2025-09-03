@@ -1,7 +1,9 @@
 package co.com.pragma.model.user.exception;
 
-public class NameInvalidException extends RuntimeException {
+import co.com.pragma.model.user.constants.ErrorCodes;
+
+public class NameInvalidException extends ValidationException {
     public NameInvalidException(String message) {
-        super(message);
+        super(message, ErrorCodes.BAD_REQUEST);
     }
 }

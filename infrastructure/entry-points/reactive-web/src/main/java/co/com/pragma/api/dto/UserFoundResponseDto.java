@@ -1,0 +1,21 @@
+package co.com.pragma.api.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "Response with the user found by email")
+public class UserFoundResponseDto {
+
+    @Schema(description = "User idDocument", example = "1234567")
+    private String idDocument;
+
+    @Schema(description = "User email", example = "correo@gmail.com.co")
+    private String email;
+
+
+}

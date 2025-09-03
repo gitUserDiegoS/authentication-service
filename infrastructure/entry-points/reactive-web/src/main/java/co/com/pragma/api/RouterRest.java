@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -65,10 +66,44 @@ public class RouterRest {
                                                             GlobalWebExceptionHandler.class)))
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/{id}",
+                    produces = {MediaType.APPLICATION_JSON_VALUE},
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "listenGetUserByEmail",
+                    operation = @Operation(
+                            operationId = "getUserByEmail",
+                            summary = "Get User By Email",
+                            requestBody = @RequestBody
+                                    (description = "CreateUserDto", required = true,
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = CreateUserDto.class)
+                                            )
+                                    ),
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "User created successfully",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            UserResponseDto.class))),
+                                    @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            GlobalWebExceptionHandler.class))),
+                                    @ApiResponse(responseCode = "500", description = "Internal error",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            GlobalWebExceptionHandler.class)))
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST(userPath.getUsers()), userHandler::listenCreateUserUseCase);
+        return route(POST(userPath.getUsers()), userHandler::listenCreateUserUseCase)
+                .andRoute(GET(userPath.getUsersByDocumentId()), userHandler::listenGetUserByDocumentId);
+
 
     }
 }
