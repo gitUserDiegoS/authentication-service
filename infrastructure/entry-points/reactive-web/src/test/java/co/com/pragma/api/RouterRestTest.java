@@ -45,8 +45,6 @@ class RouterRestTest {
     @Autowired
     private UserPath userPath;
 
-    private final String users = "/api/v1/usuarios";
-
     private final Clock fixedClock = Clock.fixed(
             LocalDate.of(2025, 8, 27).atStartOfDay(ZoneId.systemDefault()).toInstant(),
             ZoneId.systemDefault()
