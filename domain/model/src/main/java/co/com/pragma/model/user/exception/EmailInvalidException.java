@@ -1,7 +1,9 @@
 package co.com.pragma.model.user.exception;
 
-public class EmailInvalidException extends RuntimeException {
+import co.com.pragma.model.user.constants.ErrorCodes;
+
+public class EmailInvalidException extends ValidationException {
     public EmailInvalidException(String message) {
-        super(message);
+        super(message, ErrorCodes.BAD_REQUEST);
     }
 }

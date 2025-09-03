@@ -1,7 +1,9 @@
 package co.com.pragma.model.user.exception;
 
-public class SalaryBaseInvalidException extends RuntimeException {
+import co.com.pragma.model.user.constants.ErrorCodes;
+
+public class SalaryBaseInvalidException extends ValidationException {
     public SalaryBaseInvalidException(String message) {
-        super(message);
+        super(message, ErrorCodes.BAD_REQUEST);
     }
 }

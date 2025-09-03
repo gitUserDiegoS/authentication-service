@@ -6,10 +6,11 @@ import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.model.user.constants.ModelExceptionMessages;
 import co.com.pragma.model.user.constants.ValidationConstants;
 import co.com.pragma.usecase.constants.UseCaseExceptionMessages;
-import co.com.pragma.usecase.exception.EmailAlreadyRegisteredException;
+import co.com.pragma.model.user.exception.EmailAlreadyRegisteredException;
 import co.com.pragma.model.user.exception.EmailInvalidException;
 import co.com.pragma.model.user.exception.NameInvalidException;
 import co.com.pragma.model.user.exception.SalaryBaseInvalidException;
+import co.com.pragma.model.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase implements IuserUseCase {
 
     private final UserRepository userRepository;
+
 
     @Override
     public Mono<User> saveUser(User user) {
@@ -34,10 +36,16 @@ public class UserUseCase implements IuserUseCase {
                 );
     }
 
+    @Override
     public Mono<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Override
+    public Mono<User> findByIdDocument(String idDocument) {
+        return userRepository.findByIdDocument(idDocument)
+                .switchIfEmpty(Mono.<User>error(new UserNotFoundException(String.format(UseCaseExceptionMessages.USER_NOT_FOUND_EXCEPTION, idDocument))));
+    }
 
     public Mono<User> validateUserByEmail(User user) {
 

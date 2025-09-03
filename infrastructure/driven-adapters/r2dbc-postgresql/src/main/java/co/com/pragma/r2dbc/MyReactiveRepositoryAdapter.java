@@ -53,4 +53,13 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                 .doOnNext(user -> log.trace("User found with email: {}", user.getEmail()))
                 .doOnError(error -> log.error("Error searching user by email, failed with message: {}", error.getMessage()));
     }
+
+    @Override
+    public Mono<User> findByIdDocument(String documentId) {
+        log.trace("Start search of user by id document {}", documentId);
+        return repository.findByIdDocument(documentId)
+                .map(entity -> mapper.map(entity, User.class))
+                .doOnNext(user -> log.trace("User found with id: {}", user.getIdDocument()))
+                .doOnError(error -> log.error("Error searching user by id document, failed with message: {}", error.getMessage()));
+    }
 }

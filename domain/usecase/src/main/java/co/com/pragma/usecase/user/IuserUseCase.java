@@ -7,4 +7,9 @@ public interface IuserUseCase {
 
     Mono<User> saveUser(User user);
 
+    Mono<User> getUserByEmail(String email);
+
+    Mono<User> findByIdDocument(String idDocument);
+
+
 }
