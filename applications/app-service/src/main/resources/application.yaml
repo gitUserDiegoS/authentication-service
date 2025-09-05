@@ -14,9 +14,9 @@ spring:
   r2dbc:
     host: "localhost"
     port: "3306"
-    username: "root"
-    password: "raizDiego"
-    database: "authentication-db"
+    username: ${USER_DB}
+    password: ${PASS_DB}
+    database: ${NAME_DB}
 management:
   endpoints:
     web:
@@ -38,5 +38,10 @@ routes:
   paths:
     users: "/api/v1/usuarios"
     usersByDocumentId: "/api/v1/usuarios/{idDocument}"
+    login: "api/v1/login"
 
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
 

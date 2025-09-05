@@ -42,4 +42,7 @@ public class CreateUserDto {
 
     @Schema(description = "User idDocument", example = "1")
     private Long idRole;
+
+    @Schema(description = "User password", example = "pa@s7Word")
+    private String password;
 }

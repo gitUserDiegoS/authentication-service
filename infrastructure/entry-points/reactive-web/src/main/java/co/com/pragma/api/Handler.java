@@ -1,17 +1,23 @@
 package co.com.pragma.api;
 
 import co.com.pragma.api.dto.CreateUserDto;
+import co.com.pragma.api.dto.LoginRequestDto;
 import co.com.pragma.api.mapper.UserMapperDto;
+import co.com.pragma.usecase.auth.IauthUseCase;
 import co.com.pragma.usecase.user.IuserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +30,9 @@ public class Handler {
 
     private final UserMapperDto userMapperDto;
 
+    private final IauthUseCase authUseCase;
+
+    @PreAuthorize("hasAnyRole('ADMIN','ADVISOR')")
     public Mono<ServerResponse> listenCreateUserUseCase(ServerRequest serverRequest) {
 
         return serverRequest.bodyToMono(CreateUserDto.class)
@@ -54,4 +63,16 @@ public class Handler {
     }
 
 
+    public Mono<ServerResponse> listenLoginUser(ServerRequest serverRequest) {
+
+        log.trace("ingresa a login");
+        return serverRequest.bodyToMono(LoginRequestDto.class)
+                .flatMap(login -> authUseCase.login(login.getEmail(), login.getPassword()))
+                .flatMap(token -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(Map.of("token", token)))
+                .onErrorResume(e -> ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                        .bodyValue(Map.of("error", e.getMessage())));
+    }
 }
+

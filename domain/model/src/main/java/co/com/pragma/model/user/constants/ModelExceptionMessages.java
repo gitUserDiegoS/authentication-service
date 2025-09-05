@@ -15,6 +15,10 @@ public class ModelExceptionMessages {
 
     public static final String INVALID_SALARY_RANGE = "Salary base must be in a range between 0 and 15000000: %s";
 
+    public static final String INVALID_TOKEN = "Not valid token";
+
+    public static final String INVALID_CREDENTIALS = "Not valid credentials";
+
     private ModelExceptionMessages() {
         throw new IllegalStateException("Utility class");
     }

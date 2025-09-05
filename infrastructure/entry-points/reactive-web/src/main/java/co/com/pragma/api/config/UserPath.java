@@ -13,4 +13,6 @@ public class UserPath {
 
     private String usersByDocumentId;
 
+    private String login;
+
 }

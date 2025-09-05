@@ -1,5 +1,6 @@
 package co.com.pragma.usecase.user;
 
+import co.com.pragma.model.passwordencoder.IpasswordEncoder;
 import co.com.pragma.model.user.User;
 
 import co.com.pragma.model.user.gateways.UserRepository;
@@ -19,6 +20,8 @@ public class UserUseCase implements IuserUseCase {
 
     private final UserRepository userRepository;
 
+    private final IpasswordEncoder passwordEncoder;
+
 
     @Override
     public Mono<User> saveUser(User user) {
@@ -32,7 +35,23 @@ public class UserUseCase implements IuserUseCase {
                                 Mono.<User>error(new EmailAlreadyRegisteredException(String.format(UseCaseExceptionMessages.EMAIL_REGISTERED, userExists.getEmail())
                                 ))
                         )
-                        .switchIfEmpty(userRepository.save(validUser))
+                        .switchIfEmpty(
+                                passwordEncoder.encode(validUser.getPassword())
+                                        .flatMap(encodedPass -> {
+                                            validUser.setPassword(encodedPass);
+                                            return userRepository.save(validUser);
+                                        })
+
+
+                                // Mono.defer(() -> {
+                                //      validUser.setPassword(passwordEncoder.encode(validUser.getPassword()));
+                                //     return userRepository.save(validUser);
+                                // }
+
+                                // )
+
+                        )
+
                 );
     }
 

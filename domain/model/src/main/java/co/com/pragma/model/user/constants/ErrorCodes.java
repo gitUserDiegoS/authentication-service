@@ -8,6 +8,9 @@ public final class ErrorCodes {
 
     public static final String BAD_REQUEST = "BAD_REQUEST";
 
+    public static final String UNAUTHORIZED = "UNAUTHORIZED";
+
+
     private ErrorCodes() {
         throw new IllegalStateException("Utility class");
     }

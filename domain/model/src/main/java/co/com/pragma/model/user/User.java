@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Data
@@ -23,5 +24,6 @@ public class User {
     private String email;
     private BigDecimal salaryBase;
     private Long idRole;
+    private String password;
 
 }
