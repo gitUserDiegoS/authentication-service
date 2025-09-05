@@ -18,14 +18,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-    //    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-/*
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
-
- */
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, JwtAuthenticationFilter jwtFilter) {
 
@@ -38,22 +31,6 @@ public class SecurityConfig {
                 .addFilterAt(jwtFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
 
-
-        /*return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-                .authorizeExchange(exchange -> exchange
-                        .pathMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.POST, "/api/v1/solicitud").hasRole("CLIENTE")
-                        .anyExchange().authenticated()
-                )
-                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-
-                .build();
-
-         */
     }
 
 
