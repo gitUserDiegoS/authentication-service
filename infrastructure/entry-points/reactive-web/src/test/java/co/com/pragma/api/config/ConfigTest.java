@@ -67,7 +67,8 @@ class ConfigTest {
             "3199689469",
             "email@email.com",
             BigDecimal.valueOf(1),
-            1L);
+            1L,
+            "123456");
 
     private final UserResponseDto responseDto = new UserResponseDto(user.getIdUser());
 
