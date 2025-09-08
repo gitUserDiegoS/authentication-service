@@ -1,17 +1,14 @@
 package co.com.pragma.usecase.auth;
 
-import co.com.pragma.model.passwordencoder.IpasswordEncoder;
-import co.com.pragma.model.passwordencoder.PasswordEncoder;
-import co.com.pragma.model.tokenprovider.ItokenProvider;
+import co.com.pragma.model.passwordencoder.gateways.PasswordEncoderRepository;
+
 import co.com.pragma.model.tokenprovider.TokenProvider;
-import co.com.pragma.model.user.User;
-import co.com.pragma.model.user.exception.CredentialsException;
-import co.com.pragma.model.user.exception.UserNotFoundException;
+import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
+import co.com.pragma.model.tokenprovider.exception.CredentialsException;
 import co.com.pragma.model.user.gateways.UserRepository;
+import co.com.pragma.usecase.constants.UseCaseExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
-
-import static co.com.pragma.model.user.constants.ModelExceptionMessages.INVALID_CREDENTIALS;
 
 
 @RequiredArgsConstructor
@@ -19,27 +16,23 @@ public class AuthUseCase implements IauthUseCase {
 
     private final UserRepository userRepository;
 
-    private final IpasswordEncoder passwordEncoder;
+    private final PasswordEncoderRepository passwordEncoder;
 
-    private final ItokenProvider tokenProvider;
+    private final TokenProviderRepository tokenProviderRepository;
 
     @Override
-    public Mono<String> login(String email, String password) {
-
-        System.out.println("login auth usecase password");
+    public Mono<TokenProvider> login(String email, String password) {
 
         return userRepository.findByEmail(email)
-                .doOnNext(user -> System.out.println("user --use case" + user.getPassword()))
-                .switchIfEmpty(Mono.error(new UserNotFoundException("User not found")))
+                .switchIfEmpty(Mono.error(new CredentialsException(UseCaseExceptionMessages.INVALID_CREDENTIAL_EXCEPTION)))
                 .flatMap(user ->
                         passwordEncoder.matches(password, user.getPassword())
                                 .flatMap(match -> {
-                                    if (!match) {
-                                        return Mono.error(new CredentialsException("Invalid credentials"));
+                                    if (!Boolean.TRUE.equals(match)) {
+                                        return Mono.<TokenProvider>error(new CredentialsException(UseCaseExceptionMessages.INVALID_CREDENTIAL_EXCEPTION));
                                     }
-                                    return Mono.just(tokenProvider.generateToken(user));
+                                    return tokenProviderRepository.generateToken(user);
                                 })
                 );
-
     }
 }

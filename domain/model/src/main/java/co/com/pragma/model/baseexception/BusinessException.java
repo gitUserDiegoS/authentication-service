@@ -1,4 +1,4 @@
-package co.com.pragma.model.user.exception;
+package co.com.pragma.model.baseexception;
 
 public abstract class BusinessException extends RuntimeException {
 

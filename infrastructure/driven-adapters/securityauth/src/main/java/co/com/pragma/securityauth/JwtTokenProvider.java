@@ -1,10 +1,10 @@
 package co.com.pragma.securityauth;
 
-import co.com.pragma.model.tokenprovider.ItokenProvider;
-
+import co.com.pragma.model.tokenprovider.TokenProvider;
+import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
 import co.com.pragma.model.user.User;
-import co.com.pragma.model.user.exception.NotValidTokenException;
-import co.com.pragma.model.user.role.RoleEnum;
+import co.com.pragma.securityauth.exception.NotValidTokenException;
+import co.com.pragma.model.user.roleenum.RoleEnum;
 import co.com.pragma.model.usersession.UserSession;
 
 import io.jsonwebtoken.Claims;
@@ -14,7 +14,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,8 +27,11 @@ import static co.com.pragma.model.user.constants.ModelExceptionMessages.INVALID_
 
 @Slf4j
 @Component
-public class JwtTokenProvider implements ItokenProvider {
+public class JwtTokenProvider implements TokenProviderRepository {
 
+    public static final String EMAIL = "email";
+    public static final String ROLE = "role";
+    public static final String TYPE = "Bearer";
 
     private final SecretKey secret;
     private final long expiration;
@@ -37,35 +39,34 @@ public class JwtTokenProvider implements ItokenProvider {
     public JwtTokenProvider(@Value("${JWT_SECRET}") String jwtSecret,
                             @Value("${JWT_EXPIRATION}") long expiration) {
 
-        log.info("secret " + jwtSecret);
-
         this.secret = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
         this.expiration = expiration;
 
     }
 
-
     @Override
-    public String generateToken(User user) {
-        log.info("como llega user get mail" + user.getEmail());
-        log.info("como llega user get idrole" + user.getIdRole());
+    public Mono<TokenProvider> generateToken(User user) {
 
-        log.info("como llega user get mail" + RoleEnum.fromId(user.getIdRole()).getName());
+        return Mono.just(TokenProvider.builder()
+                        .token(Jwts.builder()
+                                .setSubject(user.getIdDocument())
+                                .claim(EMAIL, user.getEmail())
+                                .claim(ROLE, RoleEnum.fromId(user.getIdRole()).getName())
+                                .setIssuedAt(new Date())
+                                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                                .signWith(secret)
+                                .compact())
+                        .type(TYPE)
+                        .expires(expiration)
+                        .build())
+                .doOnNext(generated -> log.info("Token Generated successfully for userName {}", user.getEmail()))
+                .doOnError(error -> log.error("Error in generateToken method, failed with message: {}", error.getMessage()));
 
-        return Jwts.builder()
-                .setSubject(user.getIdDocument())
-                .claim("email", user.getEmail())
-                .claim("role", RoleEnum.fromId(user.getIdRole()).getName())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(secret)
-                .compact();
 
     }
 
     @Override
     public Mono<UserSession> validateToken(String token) {
-
 
         try {
             Claims claims = Jwts.parserBuilder()
@@ -76,12 +77,14 @@ public class JwtTokenProvider implements ItokenProvider {
 
             UserSession session = new UserSession(
                     Long.valueOf(claims.getSubject()),
-                    claims.get("email", String.class),
-                    claims.get("role", String.class)
+                    claims.get(EMAIL, String.class),
+                    claims.get(ROLE, String.class)
             );
 
-            log.info("como llega user get claims rol " + session.getName());
-            return Mono.just(session);
+            return Mono.just(session)
+                    .doOnNext(generated -> log.info("Token validated successfully"))
+                    .doOnError(error -> log.error("Error in validateToken method, failed with message: {}", error.getMessage()));
+
         } catch (JwtException e) {
             return Mono.error(new NotValidTokenException(INVALID_TOKEN));
         }

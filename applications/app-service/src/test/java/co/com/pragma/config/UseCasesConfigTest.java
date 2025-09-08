@@ -1,5 +1,7 @@
 package co.com.pragma.config;
 
+import co.com.pragma.model.passwordencoder.gateways.PasswordEncoderRepository;
+import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
 import co.com.pragma.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,6 +43,16 @@ class UseCasesConfigTest {
         @Bean
         public UserRepository userRepository() {
             return Mockito.mock(UserRepository.class);
+        }
+
+        @Bean
+        public PasswordEncoderRepository passwordEncoderRepository() {
+            return Mockito.mock(PasswordEncoderRepository.class);
+        }
+
+        @Bean
+        public TokenProviderRepository tokenProviderRepository() {
+            return Mockito.mock(TokenProviderRepository.class);
         }
     }
 

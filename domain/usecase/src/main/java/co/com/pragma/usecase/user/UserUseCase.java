@@ -1,6 +1,6 @@
 package co.com.pragma.usecase.user;
 
-import co.com.pragma.model.passwordencoder.IpasswordEncoder;
+import co.com.pragma.model.passwordencoder.gateways.PasswordEncoderRepository;
 import co.com.pragma.model.user.User;
 
 import co.com.pragma.model.user.gateways.UserRepository;
@@ -20,7 +20,7 @@ public class UserUseCase implements IuserUseCase {
 
     private final UserRepository userRepository;
 
-    private final IpasswordEncoder passwordEncoder;
+    private final PasswordEncoderRepository passwordEncoder;
 
 
     @Override
@@ -41,14 +41,6 @@ public class UserUseCase implements IuserUseCase {
                                             validUser.setPassword(encodedPass);
                                             return userRepository.save(validUser);
                                         })
-
-
-                                // Mono.defer(() -> {
-                                //      validUser.setPassword(passwordEncoder.encode(validUser.getPassword()));
-                                //     return userRepository.save(validUser);
-                                // }
-
-                                // )
 
                         )
 

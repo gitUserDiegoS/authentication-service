@@ -1,6 +1,5 @@
-package co.com.pragma.model.user.role;
+package co.com.pragma.model.user.roleenum;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public enum RoleEnum {

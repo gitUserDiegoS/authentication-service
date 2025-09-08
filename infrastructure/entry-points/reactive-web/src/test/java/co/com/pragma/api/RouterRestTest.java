@@ -3,9 +3,11 @@ package co.com.pragma.api;
 import co.com.pragma.api.config.UserPath;
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
+import co.com.pragma.api.mapper.LoginMapperDto;
 import co.com.pragma.api.mapper.UserMapperDto;
 import co.com.pragma.model.user.User;
 
+import co.com.pragma.usecase.auth.IauthUseCase;
 import co.com.pragma.usecase.user.IuserUseCase;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +43,12 @@ class RouterRestTest {
 
     @MockitoBean
     private UserMapperDto userMapperDto;
+
+    @MockitoBean
+    private IauthUseCase authUseCase;
+
+    @MockitoBean
+    private LoginMapperDto loginMapperDto;
 
     @Autowired
     private UserPath userPath;

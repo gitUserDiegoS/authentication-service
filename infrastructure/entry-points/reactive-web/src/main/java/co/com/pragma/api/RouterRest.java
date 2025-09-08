@@ -1,10 +1,8 @@
 package co.com.pragma.api;
 
 import co.com.pragma.api.config.UserPath;
-import co.com.pragma.api.dto.CreateUserDto;
-import co.com.pragma.api.dto.UserFoundResponseDto;
-import co.com.pragma.api.dto.UserResponseDto;
-import co.com.pragma.api.excepcionhandler.GlobalWebExceptionHandler;
+import co.com.pragma.api.dto.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,11 +62,19 @@ public class RouterRest {
                                     @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
                                             content = @Content(
                                                     schema = @Schema(implementation =
-                                                            GlobalWebExceptionHandler.class))),
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "401", description = "Unauthorized session",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "409", description = "Conflict, email already registered",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
                                     @ApiResponse(responseCode = "500", description = "Internal error",
                                             content = @Content(
                                                     schema = @Schema(implementation =
-                                                            GlobalWebExceptionHandler.class)))
+                                                            ErrorResponseDto.class)))
                             }
                     )
             ),
@@ -96,20 +102,59 @@ public class RouterRest {
                                             content = @Content(
                                                     schema = @Schema(implementation =
                                                             UserFoundResponseDto.class))),
+                                    @ApiResponse(responseCode = "401", description = "Unauthorized session",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
                                     @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
                                             content = @Content(
                                                     schema = @Schema(implementation =
-                                                            GlobalWebExceptionHandler.class))),
+                                                            ErrorResponseDto.class))),
                                     @ApiResponse(responseCode = "500", description = "Internal error",
                                             content = @Content(
                                                     schema = @Schema(implementation =
-                                                            GlobalWebExceptionHandler.class)))
+                                                            ErrorResponseDto.class)))
                             }
                     )
-            )
+            ),
+            @RouterOperation(
+                    path = "api/v1/login",
+                    produces = {MediaType.APPLICATION_JSON_VALUE},
+                    method = RequestMethod.POST,
+                    beanClass = Handler.class,
+                    beanMethod = "listenLoginUser",
+                    operation = @Operation(
+                            operationId = "Login",
+                            summary = "Allow login to registered users",
+                            requestBody = @RequestBody
+                                    (description = "LoginRequestDto", required = true,
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = LoginRequestDto.class)
+                                            )
+                                    ),
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Log in succesfully",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            LoginResponseDto.class))),
+                                    @ApiResponse(responseCode = "401", description = "Unauthorized session",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "500", description = "Internal error",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class)))
+                            }
+                    )
+            ),
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        log.info("Login handler hit");
         return route(POST(userPath.getUsers()), userHandler::listenCreateUserUseCase)
                 .andRoute(GET(userPath.getUsersByDocumentId()), userHandler::listenGetUserByDocumentId)
                 .andRoute(POST(userPath.getLogin()), userHandler::listenLoginUser);

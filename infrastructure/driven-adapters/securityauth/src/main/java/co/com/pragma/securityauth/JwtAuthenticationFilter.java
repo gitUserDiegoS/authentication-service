@@ -1,9 +1,9 @@
 package co.com.pragma.securityauth;
 
-import co.com.pragma.model.tokenprovider.ItokenProvider;
-import co.com.pragma.model.tokenprovider.TokenProvider;
-import co.com.pragma.model.user.role.RoleEnum;
+import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
+import co.com.pragma.model.user.constants.ModelExceptionMessages;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,10 +23,17 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
 
-    private final ItokenProvider tokenProvider;
+    private final TokenProviderRepository tokenProvider;
 
-    public JwtAuthenticationFilter(ItokenProvider tokenProvider) {
+    private final String userPath;
+
+    private static final String TYPE_TOKEN = "Bearer ";
+
+    private static final String TYPE_ROLE = "ROLE_";
+
+    public JwtAuthenticationFilter(TokenProviderRepository tokenProvider, @Value("${routes.paths.login}") String userPath) {
         this.tokenProvider = tokenProvider;
+        this.userPath = userPath;
     }
 
     @Override
@@ -34,30 +41,27 @@ public class JwtAuthenticationFilter implements WebFilter {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        log.info("path Diego " + path);
-
-        if (path.equals("/api/v1/login")) {
+        if (path.equals(userPath)) {
             return chain.filter(exchange);
         }
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith(TYPE_TOKEN)) {
             String token = authHeader.substring(7);
-            log.info("path Diego token IN JWAT AUTHENTICATION in filter" + token);
 
             return tokenProvider.validateToken(token)
                     .flatMap(userSession -> {
                         Authentication authentication = new UsernamePasswordAuthenticationToken(
                                 userSession,
                                 null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + userSession.getName()))
+                                List.of(new SimpleGrantedAuthority(TYPE_ROLE + userSession.getName()))
                         );
                         return chain.filter(exchange)
                                 .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
                     })
-                    .doOnNext(auth -> log.info("authorized rol " + auth))
-                    .onErrorResume(e -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token")));
+                    .doOnNext(auth -> log.info("Authorized rol, token validated successfully"))
+                    .onErrorResume(e -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, ModelExceptionMessages.INVALID_TOKEN)));
         }
 
         return chain.filter(exchange);

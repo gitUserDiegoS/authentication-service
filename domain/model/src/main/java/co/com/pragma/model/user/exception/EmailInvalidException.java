@@ -6,4 +6,8 @@ public class EmailInvalidException extends ValidationException {
     public EmailInvalidException(String message) {
         super(message, ErrorCodes.BAD_REQUEST);
     }
+
+    public EmailInvalidException(String message, String code) {
+        super(message, code);
+    }
 }
