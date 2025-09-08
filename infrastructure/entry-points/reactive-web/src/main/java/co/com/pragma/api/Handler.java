@@ -11,13 +11,17 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -76,6 +80,24 @@ public class Handler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(token))
                 .doOnError(err -> log.error("Error in handler-->listenLoginUser{}", err.getMessage(), err));
+
+    }
+
+
+    public Mono<ServerResponse> listenUsersByEmail(ServerRequest serverRequest) {
+
+
+        return serverRequest.bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                })
+                .flatMapMany(userUseCase::getUsersByEmailBatch)
+                .map(userMapperDto::toFoundResponse)
+                .collectList()
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user));
+
+        //.switchIfEmpty(ServerResponse.notFound().build())
+        //.doOnError(err -> log.error("Error in handler-->listenGetUserByEmail{}", err.getMessage(), err));
 
     }
 }

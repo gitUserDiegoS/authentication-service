@@ -10,7 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.reactive.TransactionalOperator;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Repository
 public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
@@ -61,5 +64,11 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                 .map(entity -> mapper.map(entity, User.class))
                 .doOnNext(user -> log.trace("User found with id: {}", user.getIdDocument()))
                 .doOnError(error -> log.error("Error searching user by id document, failed with message: {}", error.getMessage()));
+    }
+
+    @Override
+    public Flux<User> findAllByEmailIn(List<String> emails) {
+        return repository.findAllByEmailIn(emails)
+                .map(entity -> mapper.map(entity, User.class));
     }
 }

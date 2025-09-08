@@ -157,7 +157,8 @@ public class RouterRest {
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST(userPath.getUsers()), userHandler::listenCreateUserUseCase)
                 .andRoute(GET(userPath.getUsersByDocumentId()), userHandler::listenGetUserByDocumentId)
-                .andRoute(POST(userPath.getLogin()), userHandler::listenLoginUser);
+                .andRoute(POST(userPath.getLogin()), userHandler::listenLoginUser)
+                .andRoute(POST(userPath.getUsersByEmails()), userHandler::listenUsersByEmail);
 
 
     }
