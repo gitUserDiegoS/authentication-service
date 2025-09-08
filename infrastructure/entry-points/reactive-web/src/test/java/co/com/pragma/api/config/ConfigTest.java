@@ -4,9 +4,11 @@ import co.com.pragma.api.Handler;
 import co.com.pragma.api.RouterRest;
 import co.com.pragma.api.dto.CreateUserDto;
 import co.com.pragma.api.dto.UserResponseDto;
+import co.com.pragma.api.mapper.LoginMapperDto;
 import co.com.pragma.api.mapper.UserMapperDto;
 import co.com.pragma.model.user.User;
 
+import co.com.pragma.usecase.auth.IauthUseCase;
 import co.com.pragma.usecase.user.UserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,12 @@ class ConfigTest {
     @MockitoBean
     private UserMapperDto userMapperDto;
 
+    @MockitoBean
+    private IauthUseCase authUseCase;
+
+    @MockitoBean
+    private LoginMapperDto loginMapperDto;
+
     private final Clock fixedClock = Clock.fixed(
             LocalDate.of(2025, 8, 27).atStartOfDay(ZoneId.systemDefault()).toInstant(),
             ZoneId.systemDefault()
@@ -67,7 +75,8 @@ class ConfigTest {
             "3199689469",
             "email@email.com",
             BigDecimal.valueOf(1),
-            1L);
+            1L,
+            "123456");
 
     private final UserResponseDto responseDto = new UserResponseDto(user.getIdUser());
 

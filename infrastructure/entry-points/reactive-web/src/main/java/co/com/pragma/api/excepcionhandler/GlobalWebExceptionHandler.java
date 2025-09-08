@@ -2,6 +2,7 @@ package co.com.pragma.api.excepcionhandler;
 
 import co.com.pragma.api.dto.ErrorResponseDto;
 
+import co.com.pragma.model.baseexception.BusinessException;
 import co.com.pragma.model.user.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ public class GlobalWebExceptionHandler {
             Exception ex, ServerWebExchange exchange) {
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                "INTERNAL_ERROR",
+                ErrorType.INTERNAL_SERVER_ERROR.name(),
                 ex.getMessage(),
                 exchange.getRequest().getPath().value()
         );

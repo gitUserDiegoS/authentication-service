@@ -1,3 +1,5 @@
 routes:
   paths:
     users: "/api/v1/usuarios"
+    usersByDocumentId: "/api/v1/usuarios/{idDocument}"
+    login: "api/v1/login"

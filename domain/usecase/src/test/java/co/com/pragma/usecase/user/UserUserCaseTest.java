@@ -1,6 +1,7 @@
 package co.com.pragma.usecase.user;
 
 
+import co.com.pragma.model.passwordencoder.gateways.PasswordEncoderRepository;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.constants.ModelExceptionMessages;
 import co.com.pragma.model.user.exception.*;
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +33,11 @@ class UserUseCaseTest {
     @Mock
     private UserRepository userRepository;
 
-    private UserUseCase userUseCase;
+    @Mock
+    private PasswordEncoderRepository passwordEncoder;
+
+    private IuserUseCase userUseCase;
+
 
     private final Clock fixedClock = Clock.fixed(
             LocalDate.of(2025, 8, 27).atStartOfDay(ZoneId.systemDefault()).toInstant(),
@@ -49,17 +55,20 @@ class UserUseCaseTest {
             .email("email@email.com")
             .salaryBase(BigDecimal.valueOf(1))
             .idRole(1L)
+            .password("p@s7word")
             .build();
 
     @BeforeEach
     void setUp() {
-        userUseCase = new UserUseCase(userRepository);
+
+        userUseCase = new UserUseCase(userRepository, passwordEncoder);
     }
 
     @Test
     void shouldSaveEmailNotRegistered() {
         when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
+        when(passwordEncoder.encode(anyString())).thenReturn(Mono.just("$2a$10$WORYuN8CojVxmzofh.4S9.7dHnSf2703Vusn5/BdTOl37d/7rpJry"));
 
         StepVerifier.create(userUseCase.saveUser(user))
                 .expectNext(user)
@@ -69,7 +78,7 @@ class UserUseCaseTest {
     @Test
     void shouldFailWhenEmailAlreadyRegistered() {
         when(userRepository.findByEmail(anyString())).thenReturn(Mono.just(user));
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
+        when(passwordEncoder.encode(anyString())).thenReturn(Mono.just("$2a$10$WORYuN8CojVxmzofh.4S9.7dHnSf2703Vusn5/BdTOl37d/7rpJry"));
 
         StepVerifier.create(userUseCase.saveUser(user))
                 .expectErrorSatisfies(error -> {
