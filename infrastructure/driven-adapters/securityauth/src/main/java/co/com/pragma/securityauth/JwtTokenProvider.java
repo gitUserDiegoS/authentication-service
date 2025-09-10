@@ -3,7 +3,6 @@ package co.com.pragma.securityauth;
 import co.com.pragma.model.tokenprovider.TokenProvider;
 import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
 import co.com.pragma.model.user.User;
-import co.com.pragma.securityauth.exception.NotValidTokenException;
 import co.com.pragma.model.user.roleenum.RoleEnum;
 import co.com.pragma.model.usersession.UserSession;
 
@@ -16,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -86,7 +86,7 @@ public class JwtTokenProvider implements TokenProviderRepository {
                     .doOnError(error -> log.error("Error in validateToken method, failed with message: {}", error.getMessage()));
 
         } catch (JwtException e) {
-            return Mono.error(new NotValidTokenException(INVALID_TOKEN));
+            return Mono.error(new BadCredentialsException(INVALID_TOKEN));
         }
     }
 }

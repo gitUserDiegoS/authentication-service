@@ -10,6 +10,8 @@ public final class ErrorCodes {
 
     public static final String UNAUTHORIZED = "UNAUTHORIZED";
 
+    public static final String FORBIDEN = "FORBIDEN";
+
 
     private ErrorCodes() {
         throw new IllegalStateException("Utility class");

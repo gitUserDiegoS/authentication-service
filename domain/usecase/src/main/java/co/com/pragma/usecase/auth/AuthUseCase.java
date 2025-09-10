@@ -5,6 +5,7 @@ import co.com.pragma.model.passwordencoder.gateways.PasswordEncoderRepository;
 import co.com.pragma.model.tokenprovider.TokenProvider;
 import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
 import co.com.pragma.model.tokenprovider.exception.CredentialsException;
+
 import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.usecase.constants.UseCaseExceptionMessages;
 import lombok.RequiredArgsConstructor;
@@ -35,4 +36,5 @@ public class AuthUseCase implements IauthUseCase {
                                 })
                 );
     }
+
 }

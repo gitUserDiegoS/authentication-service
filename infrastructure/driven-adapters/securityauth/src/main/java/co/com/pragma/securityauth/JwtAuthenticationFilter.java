@@ -2,6 +2,7 @@ package co.com.pragma.securityauth;
 
 import co.com.pragma.model.tokenprovider.gateways.TokenProviderRepository;
 import co.com.pragma.model.user.constants.ModelExceptionMessages;
+import co.com.pragma.securityauth.config.Whitelist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,7 @@ public class JwtAuthenticationFilter implements WebFilter {
     public JwtAuthenticationFilter(TokenProviderRepository tokenProvider, @Value("${routes.paths.login}") String userPath) {
         this.tokenProvider = tokenProvider;
         this.userPath = userPath;
+        ;
     }
 
     @Override
