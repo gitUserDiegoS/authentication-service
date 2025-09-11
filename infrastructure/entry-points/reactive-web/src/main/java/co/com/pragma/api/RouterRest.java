@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import java.util.List;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -118,7 +120,7 @@ public class RouterRest {
                     )
             ),
             @RouterOperation(
-                    path = "api/v1/login",
+                    path = "/api/v1/login",
                     produces = {MediaType.APPLICATION_JSON_VALUE},
                     method = RequestMethod.POST,
                     beanClass = Handler.class,
@@ -138,6 +140,42 @@ public class RouterRest {
                                             content = @Content(
                                                     schema = @Schema(implementation =
                                                             LoginResponseDto.class))),
+                                    @ApiResponse(responseCode = "401", description = "Unauthorized session",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "400", description = "Bad request due to validation result",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class))),
+                                    @ApiResponse(responseCode = "500", description = "Internal error",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            ErrorResponseDto.class)))
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/emails",
+                    produces = {MediaType.APPLICATION_JSON_VALUE},
+                    method = RequestMethod.POST,
+                    beanClass = Handler.class,
+                    beanMethod = "listenUsersByEmail",
+                    operation = @Operation(
+                            operationId = "usersByEmails",
+                            summary = "Allow login to registered users",
+                            requestBody = @RequestBody
+                                    (description = "List<String>", required = true,
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    schema = @Schema(implementation = List.class)
+                                            )
+                                    ),
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Emails found by by batch",
+                                            content = @Content(
+                                                    schema = @Schema(implementation =
+                                                            UserFoundResponseDto.class))),
                                     @ApiResponse(responseCode = "401", description = "Unauthorized session",
                                             content = @Content(
                                                     schema = @Schema(implementation =

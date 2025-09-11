@@ -19,7 +19,6 @@ public class UserFoundResponseDto {
     @Schema(description = "User email", example = "correo@gmail.com.co")
     private String email;
 
-    //validar si crear otro response
     @Schema(description = "User name")
     private String name;
 
