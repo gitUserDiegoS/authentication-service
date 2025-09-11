@@ -13,7 +13,10 @@ import co.com.pragma.model.user.exception.NameInvalidException;
 import co.com.pragma.model.user.exception.SalaryBaseInvalidException;
 import co.com.pragma.model.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserUseCase implements IuserUseCase {
@@ -56,6 +59,11 @@ public class UserUseCase implements IuserUseCase {
     public Mono<User> findByIdDocument(String idDocument) {
         return userRepository.findByIdDocument(idDocument)
                 .switchIfEmpty(Mono.<User>error(new UserNotFoundException(String.format(UseCaseExceptionMessages.USER_NOT_FOUND_EXCEPTION, idDocument))));
+    }
+
+    @Override
+    public Flux<User> getUsersByEmailBatch(List<String> emails) {
+        return userRepository.findAllByEmailIn(emails);
     }
 
     public Mono<User> validateUserByEmail(User user) {

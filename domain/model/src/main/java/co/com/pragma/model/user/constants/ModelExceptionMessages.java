@@ -17,8 +17,6 @@ public class ModelExceptionMessages {
 
     public static final String INVALID_TOKEN = "Not valid token";
 
-    public static final String INVALID_CREDENTIALS = "Not valid credentials";
-
     private ModelExceptionMessages() {
         throw new IllegalStateException("Utility class");
     }
