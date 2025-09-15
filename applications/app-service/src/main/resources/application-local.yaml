@@ -1,0 +1,13 @@
+server:
+  port: 8080
+spring:
+  r2dbc:
+    host: localhost
+    port: "3306"
+    username: ${USER_DB}
+    password: ${PASS_DB}
+    database: "authentication-db"
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+
