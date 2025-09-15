@@ -1,0 +1,11 @@
+server:
+  port: 8080
+spring:
+  r2dbc:
+    host: ${R2DBC_HOST_AUTH:localhost}
+    port: "3306"
+    username: ${CREDI_USER_DB}
+    password: ${CREDI_PASS_DB}
+    database: "authentication-db"
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
