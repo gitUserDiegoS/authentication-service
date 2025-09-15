@@ -12,11 +12,11 @@ spring:
   profiles:
     include: null
   r2dbc:
-    host: "localhost"
+    host: ${R2DBC_HOST_AUTH:localhost}
     port: "3306"
-    username: ${USER_DB}
-    password: ${PASS_DB}
-    database: ${NAME_DB}
+    username: ${CREDI_USER_DB}
+    password: ${CREDI_PASS_DB}
+    database: "authentication-db"
 management:
   endpoints:
     web:
