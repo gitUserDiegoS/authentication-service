@@ -89,15 +89,12 @@ public class Handler {
 
         return serverRequest.bodyToMono(new ParameterizedTypeReference<List<String>>() {
                 })
-                .flatMapMany(userUseCase::getUsersByEmailBatch)
+                .flatMapMany(list -> userUseCase.getUsersByEmailBatch(Flux.fromIterable(list)))
                 .map(userMapperDto::toFoundResponse)
                 .collectList()
                 .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(user));
-
-        //.switchIfEmpty(ServerResponse.notFound().build())
-        //.doOnError(err -> log.error("Error in handler-->listenGetUserByEmail{}", err.getMessage(), err));
 
     }
 }

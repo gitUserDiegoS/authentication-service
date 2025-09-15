@@ -62,7 +62,7 @@ public class UserUseCase implements IuserUseCase {
     }
 
     @Override
-    public Flux<User> getUsersByEmailBatch(List<String> emails) {
+    public Flux<User> getUsersByEmailBatch(Flux<String> emails) {
         return userRepository.findAllByEmailIn(emails);
     }
 

@@ -14,6 +14,6 @@ public interface UserRepository {
 
     Mono<User> findByIdDocument(String documentId);
 
-    Flux<User> findAllByEmailIn(List<String> email);
+    Flux<User> findAllByEmailIn(Flux<String> emails);
 
 }

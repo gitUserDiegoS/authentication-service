@@ -14,7 +14,7 @@ public interface IuserUseCase {
 
     Mono<User> findByIdDocument(String idDocument);
 
-    Flux<User> getUsersByEmailBatch(List<String> emails);
+    Flux<User> getUsersByEmailBatch(Flux<String> emails);
 
 
 }

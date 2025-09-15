@@ -67,8 +67,9 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Flux<User> findAllByEmailIn(List<String> emails) {
-        return repository.findAllByEmailIn(emails)
+    public Flux<User> findAllByEmailIn(Flux<String> emails) {
+        return emails.collectList()
+                .flatMapMany(emailList -> repository.findAllByEmailIn(emailList))
                 .map(entity -> mapper.map(entity, User.class));
     }
 }
