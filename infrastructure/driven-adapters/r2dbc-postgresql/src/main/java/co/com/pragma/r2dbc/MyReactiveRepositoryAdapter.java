@@ -13,7 +13,6 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 @Repository
 public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
@@ -67,8 +66,9 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
-    public Flux<User> findAllByEmailIn(List<String> emails) {
-        return repository.findAllByEmailIn(emails)
+    public Flux<User> findAllByEmailIn(Flux<String> emails) {
+        return emails.collectList()
+                .flatMapMany(emailList -> repository.findAllByEmailIn(emailList))
                 .map(entity -> mapper.map(entity, User.class));
     }
 }

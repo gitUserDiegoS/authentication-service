@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter implements WebFilter {
     public JwtAuthenticationFilter(TokenProviderRepository tokenProvider, @Value("${routes.paths.login}") String userPath) {
         this.tokenProvider = tokenProvider;
         this.userPath = userPath;
-        ;
     }
 
     @Override
